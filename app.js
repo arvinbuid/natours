@@ -35,7 +35,6 @@ const getAllTours = (req, res) => {
   });
 };
 
-// Get single tour
 const getTour = (req, res) => {
   // console.log(req.params);
   const id = +req.params.id;
@@ -57,7 +56,6 @@ const getTour = (req, res) => {
   });
 };
 
-// Create a new tour
 const createTour = (req, res) => {
   // console.log(req.body);
 
@@ -82,7 +80,6 @@ const createTour = (req, res) => {
   );
 };
 
-// Update tour
 const updateTour = (req, res) => {
   // check if tour exists
   if (+req.params.id > tours.length) {
@@ -100,7 +97,6 @@ const updateTour = (req, res) => {
   });
 };
 
-// Delete tour
 const deleteTour = (req, res) => {
   // check if tour exists
   if (+req.params.id > tours.length) {
@@ -152,19 +148,17 @@ const deleteUser = (req, res) => {
 };
 
 // Routes
-app.route('/api/v1/tours').get(getAllTours).post(createTour);
-app
-  .route('/api/v1/tours/:id')
-  .get(getTour)
-  .patch(updateTour)
-  .delete(deleteTour);
+const tourRouter = express.Router();
+const userRouter = express.Router();
 
-app.route('/api/v1/users').get(getAllUsers).post(createUser);
-app
-  .route('/api/v1/users/:id')
-  .get(getUser)
-  .patch(updateUser)
-  .delete(deleteUser);
+tourRouter.route('/').get(getAllTours).post(createTour);
+tourRouter.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
+
+userRouter.route('/').get(getAllUsers).post(createUser);
+userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
+
+app.use('/api/v1/tours', tourRouter); // mounting the router
+app.use('/api/v1/users', userRouter);
 
 // Start the server
 app.listen(port, () => {
