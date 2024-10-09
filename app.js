@@ -69,10 +69,9 @@ app.post('/api/v1/tours', (req, res) => {
   );
 });
 
-// Update Single Tour
+// Update Tour
 app.patch('/api/v1/tours/:id', (req, res) => {
   // check if tour exists
-  console.log(req.params);
   if (+req.params.id > tours.length) {
     return res.status(404).json({
       status: 'fail',
@@ -85,6 +84,22 @@ app.patch('/api/v1/tours/:id', (req, res) => {
     data: {
       tour: '<Updated tour here>...',
     },
+  });
+});
+
+// Delete Tour
+app.delete('/api/v1/tours/:id', (req, res) => {
+  // check if tour exists
+  if (+req.params.id > tours.length) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Invalid ID',
+    });
+  }
+
+  res.status(204).json({
+    status: 'success',
+    data: null,
   });
 });
 
