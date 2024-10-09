@@ -32,7 +32,7 @@ app.get('/api/v1/tours/:id', (req, res) => {
   if (id > tours.length) {
     return res.status(404).json({
       status: 'fail',
-      message: 'Tour cannot be found',
+      message: 'Invalid ID',
     });
   }
 
@@ -62,11 +62,30 @@ app.post('/api/v1/tours', (req, res) => {
         status: 'success',
         message: 'New tour created',
         data: {
-          tours: newTour,
+          tour: newTour,
         },
       });
     }
   );
+});
+
+// Update Single Tour
+app.patch('/api/v1/tours/:id', (req, res) => {
+  // check if tour exists
+  console.log(req.params);
+  if (+req.params.id > tours.length) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Invalid ID',
+    });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      tour: '<Updated tour here>...',
+    },
+  });
 });
 
 app.listen(port, () => {
