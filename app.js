@@ -3,13 +3,13 @@ const morgan = require('morgan');
 
 const app = express();
 
-// Route handlers
-const tourRouter = require('./routes/tourRoutes');
-const userRouter = require('./routes/userRoutes');
-
 // Middlewares
 app.use(express.json());
 app.use(morgan('dev'));
+
+// Route handlers
+const tourRouter = require('./routes/tourRoutes');
+const userRouter = require('./routes/userRoutes');
 
 // Routes
 app.use('/api/v1/tours', tourRouter); // mounting the router
