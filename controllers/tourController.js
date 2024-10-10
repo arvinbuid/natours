@@ -6,7 +6,7 @@ const tours = JSON.parse(
 
 // Middlewares
 exports.checkID = (req, res, next, val) => {
-  console.log(`The id is: ${val}`);
+  // console.log(`The id is: ${val}`);
 
   if (+req.params.id > tours.length) {
     return res.status(404).json({
