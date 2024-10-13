@@ -3,12 +3,25 @@ const Tour = require('./../models/tourModel');
 // Route handlers
 exports.getAllTours = async (req, res) => {
   try {
+    console.log(req.query);
     // BUILD QUERY
+    // 1.) Filtering
     const queryObj = { ...req.query }; // shallow copy
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach(el => delete queryObj[el]);
 
-    const query = Tour.find(queryObj); // necessary to chain query methods
+    // 2.) Advanced Filtering
+
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+
+    // { difficulty: 'easy', duration: { $gte: 5 } }
+    // { difficulty: 'easy', duration: { gte: '5' } }
+
+    const query = Tour.find(JSON.parse(queryStr)); // necessary to chain query methods
+
+    // EXECUTE QUERY
+    const tours = await query;
 
     // const query = Tour.find()
     //   .where('duration')
@@ -16,11 +29,7 @@ exports.getAllTours = async (req, res) => {
     //   .where('difficulty')
     //   .equals('easy');
 
-    // EXECUTE QUERY
-    const tours = await query;
-
-    console.log('Request query: ', req.query);
-    console.log('Query object: ', queryObj);
+    // console.log(queryObj);
 
     // SEND RESPONSE
     res.status(200).json({
