@@ -2,15 +2,18 @@ const express = require('express');
 const morgan = require('morgan');
 
 const app = express();
+const AppError = require('./utils/appError');
+const globalErrorHandler = require('./controllers/errorController');
 
 // Middlewares
 app.use(express.json());
 
-console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 app.use(express.static(`${__dirname}/public`));
+
+// console.log(process.env.NODE_ENV);
 
 // Route handlers
 const tourRouter = require('./routes/tourRoutes');
@@ -21,24 +24,11 @@ app.use('/api/v1/tours', tourRouter); // mounting the router
 app.use('/api/v1/users', userRouter);
 
 app.all('*', function(req, res, next) {
-  // res.status(404).json({
-  //   status: 'fail',
-  //   message: `The requested ${req.originalUrl} cannot be found😔`
-  // });
-  const err = new Error(`The requested ${req.originalUrl} cannot be found😔`);
-  err.status = 'fail';
-  err.statusCode = 404;
-  next(err);
+  next(
+    new AppError(`The requested ${req.originalUrl} cannot be found😔`, '404')
+  );
 });
 
-app.use((err, req, res, next) => {
-  err.statusCode = err.statusCode || 500;
-  err.status = err.status || 'error';
-
-  res.status(err.statusCode).json({
-    status: err.status,
-    message: err.message
-  });
-});
+app.use(globalErrorHandler);
 
 module.exports = app;
