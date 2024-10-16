@@ -20,4 +20,12 @@ const userRouter = require('./routes/userRoutes');
 app.use('/api/v1/tours', tourRouter); // mounting the router
 app.use('/api/v1/users', userRouter);
 
+app.all('*', function(req, res, next) {
+  res.status(404).json({
+    status: 'fail',
+    message: `The requested ${req.originalUrl} cannot be found😔`
+  });
+  next();
+});
+
 module.exports = app;
