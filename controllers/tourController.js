@@ -33,8 +33,8 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 exports.getTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findById(req.params.id);
 
-  if (tour === null) {
-    return next(new AppError('Cannot fint tour with that id.', 404));
+  if (!tour) {
+    return next(new AppError('Cannot find tour with that id.', 404));
   }
 
   res.status(200).json({
@@ -64,7 +64,7 @@ exports.updateTour = catchAsync(async (req, res, next) => {
   });
 
   if (tour === null) {
-    return next(new AppError('Cannot fint tour with that id.', 404));
+    return next(new AppError('Cannot find tour with that id.', 404));
   }
 
   res.status(200).json({
@@ -79,7 +79,7 @@ exports.deleteTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findByIdAndDelete(req.params.id);
 
   if (tour === null) {
-    return next(new AppError('Cannot fint tour with that id.', 404));
+    return next(new AppError('Cannot find tour with that id.', 404));
   }
 
   res.status(204).json({

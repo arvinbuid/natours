@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 app.use(express.static(`${__dirname}/public`));
 
-// console.log(process.env.NODE_ENV);
+console.log(process.env.NODE_ENV);
 
 // Route handlers
 const tourRouter = require('./routes/tourRoutes');
@@ -22,7 +22,6 @@ const userRouter = require('./routes/userRoutes');
 // Routes
 app.use('/api/v1/tours', tourRouter); // mounting the router
 app.use('/api/v1/users', userRouter);
-
 app.all('*', function(req, res, next) {
   next(
     new AppError(`The requested ${req.originalUrl} cannot be found😔`, '404')
