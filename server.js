@@ -2,6 +2,16 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const process = require('process');
 
+// Handling errors occured in synchronous codes
+process.on('uncaughtException', err => {
+  const filteredStack = err.stack
+    .split('\n')
+    .filter(frame => !frame.includes('node:internal'))
+    .join('\n');
+  console.log(filteredStack);
+  console.log('UNCAUGHT EXCEPTION, Shutting down...💥');
+});
+
 dotenv.config({ path: './config.env' });
 const app = require('./app');
 
