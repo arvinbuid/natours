@@ -9,7 +9,7 @@ process.on('uncaughtException', err => {
     .filter(frame => !frame.includes('node:internal'))
     .join('\n');
   console.log(filteredStack);
-  console.log('UNCAUGHT EXCEPTION, Shutting down...💥');
+  console.error('UNCAUGHT EXCEPTION, Shutting down...💥');
 });
 
 dotenv.config({ path: './config.env' });
@@ -41,7 +41,7 @@ const server = app.listen(port, () => {
 // Handling errors occured in asynchronous codes
 process.on('unhandledRejection', err => {
   console.log(err.name, err.message);
-  console.log('UNHANDLED REJECTION, Shutting down...💥');
+  console.error('UNHANDLED REJECTION, Shutting down...💥');
   server.close(() => {
     process.exit(1);
   });
