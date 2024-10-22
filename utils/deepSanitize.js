@@ -35,7 +35,10 @@ const deepSanitize = function(val) {
   }
   if (typeof val === 'object' && val !== null) {
     Object.keys(val).forEach(key => {
-      val[key] = deepSanitize(val[key]);
+      // Only sanitize string values, leave others (e.g., numbers, booleans) as they are
+      if (typeof val[key] === 'string') {
+        val[key] = deepSanitize(val[key]);
+      }
     });
   }
 };
