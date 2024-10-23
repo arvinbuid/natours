@@ -34,6 +34,23 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
+// MIDDLEWARES
+reviewSchema.pre(/^find/, function(next) {
+  this.populate([
+    {
+      path: 'tour',
+      select:
+        '-guides -_id -durationWeeks -startLocation -ratingsQuantity -images -startDates -secretTour -duration -maxGroupSize -difficulty -price -description -imageCover -locations -slug -__v -durationWeeks -id'
+    },
+    {
+      path: 'user',
+      select: 'name photo'
+    }
+  ]);
+
+  next();
+});
+
 // Model
 const Review = mongoose.model('Review', reviewSchema);
 
