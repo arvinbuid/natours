@@ -8,6 +8,9 @@ const hpp = require('hpp');
 const AppError = require('./utils/appError');
 const deepSanitize = require('./utils/deepSanitize');
 const globalErrorHandler = require('./controllers/errorController');
+const tourRouter = require('./routes/tourRoutes');
+const userRouter = require('./routes/userRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
 
 const app = express();
 
@@ -64,13 +67,10 @@ app.use(
 //   next();
 // });
 
-// ROUTE HANDLERS
-const tourRouter = require('./routes/tourRoutes');
-const userRouter = require('./routes/userRoutes');
-
 // ROUTES
 app.use('/api/v1/tours', tourRouter); // mounting the router
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRouter);
 app.all('*', function(req, res, next) {
   next(
     new AppError(`The requested ${req.originalUrl} cannot be found😔`, '404')
