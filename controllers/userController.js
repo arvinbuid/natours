@@ -1,6 +1,7 @@
 const AppError = require('../utils/appError');
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
+const factory = require('./handlerFactory');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -49,6 +50,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
+// Mark the user as NOT active in the DB
 exports.deleteMe = catchAsync(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user._id, { active: false });
 
@@ -79,9 +81,4 @@ exports.updateUser = (req, res) => {
   });
 };
 
-exports.deleteUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'Route is not defined yet!'
-  });
-};
+exports.deleteUser = factory.handleOne(User);
