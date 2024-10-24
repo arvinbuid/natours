@@ -28,7 +28,7 @@ router
   .patch(userController.updateUser)
   .delete(
     authController.protect,
-    authController.restrictTo('admin', 'guide', 'lead-guide'),
+    authController.restrictTo('admin'),
     userController.deleteUser
   );
 
