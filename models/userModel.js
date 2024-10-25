@@ -56,10 +56,11 @@ userSchema.pre('save', async function(next) {
   // Hash the password
   this.password = await bcrypt.hash(this.password, 12);
 
-  // Delete the passwordConfim field
+  // Delete the passwordConfirm field
   this.passwordConfirm = undefined;
 });
 
+// Middleware to add passwordChangedAt property to the database
 userSchema.pre('save', function(next) {
   if (this.isModified('password') || this.isNew) return next();
 
@@ -68,6 +69,7 @@ userSchema.pre('save', function(next) {
   next();
 });
 
+// Middleware to run if a user deactivate their account
 userSchema.pre(/^find/, function(next) {
   this.find({ active: { $ne: false } });
   next();
