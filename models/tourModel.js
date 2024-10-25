@@ -124,6 +124,12 @@ const tourSchema = new mongoose.Schema(
   }
 );
 
+// Indexing and Compound Index implementation
+// NOTE: ONLY use indexing to the fields that are queried the most
+// in this case, the price & ratingsAverage are ONLY implemented here
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
+
 tourSchema.virtual('durationWeeks').get(function() {
   return this.duration / 7;
 });
