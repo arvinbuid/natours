@@ -59,16 +59,37 @@ reviewSchema.statics.calcAverageRatings = async function(tourId) {
     }
   ]);
 
+  // console.log(stats);
+
   // Save statistics to current tour
-  await Tour.findByIdAndUpdate(tourId, {
-    ratingsQuantity: stats[0].nReviews,
-    ratingsAverage: stats[0].rating
-  });
+  if (stats.length > 0) {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingsQuantity: stats[0].nReviews,
+      ratingsAverage: stats[0].rating
+    });
+  } else {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingsQuantity: 0,
+      ratingsAverage: 4.5
+    });
+  }
 };
 
 reviewSchema.post('save', function() {
   // this points to current review
   this.constructor.calcAverageRatings(this.tour);
+});
+
+// findByIdAndUpdate
+// findByIdAndDelete
+reviewSchema.pre(/^findOneAnd/, async function(next) {
+  this.review = await this.findOne();
+  next();
+});
+
+reviewSchema.post(/^findOneAnd/, async function() {
+  // await this.findOne() does NOT work here, query has already executed
+  await this.review.constructor.calcAverageRatings(this.review.tour);
 });
 
 // Model
