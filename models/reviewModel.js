@@ -35,6 +35,9 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
+// Unique Compound Index for tour and user field to avoid duplicate tour reviews from the same user.
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 // MIDDLEWARES
 reviewSchema.pre(/^find/, function(next) {
   this.populate({
@@ -75,6 +78,7 @@ reviewSchema.statics.calcAverageRatings = async function(tourId) {
   }
 };
 
+// Middleware to execute tourSchema static method calcAverageRatings()
 reviewSchema.post('save', function() {
   // this points to current review
   this.constructor.calcAverageRatings(this.tour);
@@ -87,6 +91,7 @@ reviewSchema.pre(/^findOneAnd/, async function(next) {
   next();
 });
 
+// Middleware to execute tourSchema static method calcAverageRatings() when updating and deleting a review
 reviewSchema.post(/^findOneAnd/, async function() {
   // await this.findOne() does NOT work here, query has already executed
   await this.review.constructor.calcAverageRatings(this.review.tour);
