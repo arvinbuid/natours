@@ -76,7 +76,7 @@ app.use(
 // Views
 app.get('/', (req, res) => {
   res.status(200).render('base', {
-    tour: 'The Forest Hiker',
+    title: 'Home',
     user: 'Arvin'
   });
 });
