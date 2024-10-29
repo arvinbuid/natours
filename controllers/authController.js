@@ -70,6 +70,7 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.logout = (req, res) => {
+  // Set similar cookie but without token
   res.cookie('jwt', 'loggedout', {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true
