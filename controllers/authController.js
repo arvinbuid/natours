@@ -121,6 +121,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   req.user = currentUser;
+  res.locals.user = currentUser;
 
   // GRANT ACCESS TO PROTECTED ROUTES
   next();
@@ -149,7 +150,7 @@ exports.isLoggedIn = async (req, res, next) => {
       }
 
       // If all checks are met, there is a logged in user. Do this next step
-      res.locals.user = currentUser; // add currentUser into req.locals
+      res.locals.user = currentUser; // add currentUser into res.locals
       return next();
     }
   } catch (err) {
