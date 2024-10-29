@@ -116,6 +116,36 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
+// Only for rendered pages, no errors here!
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  if (req.cookies.jwt) {
+    // 1.) Verify token
+    const decoded = await promisify(jwt.verify)(
+      req.cookies.jwt,
+      process.env.JWT_SECRET
+    );
+
+    // 2.) Check if user still exists
+    const currentUser = await User.findById(decoded.id);
+
+    if (!currentUser) {
+      return next();
+    }
+
+    // 3.) Check if user changed password after the token was issued
+    if (currentUser.changedPasswordAfter(decoded.iat)) {
+      return next();
+    }
+
+    // If all checks are met, there is a logged in user. Do this next step
+    res.locals.user = currentUser; // add currentUser into req.locals
+    return next();
+  }
+
+  // If there is no cookies, proceed to next middleware
+  next();
+});
+
 exports.restrictTo = (...roles) => {
   // roles = ['admin', 'lead-guide'], role='user'
   return (req, res, next) => {
