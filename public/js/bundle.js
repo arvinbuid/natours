@@ -2581,19 +2581,39 @@
     }
   };
 
+  // public/js/userLogout.js
+  var logout = async () => {
+    try {
+      const res = await axios_default({
+        method: "GET",
+        url: "http://localhost:3000/api/v1/users/logout"
+      });
+      if (res.data.status === "success") {
+        showAlert("success", "Logged out successfully");
+        window.setTimeout(() => {
+          location.reload(true);
+        }, 1e3);
+      }
+    } catch (err) {
+      console.log(err.response);
+      showAlert("error", "Error logging out. Please try again");
+    }
+  };
+
   // public/js/index.js
   var mapBox = document.getElementById("map");
   var loginForm = document.querySelector(".form");
+  var logOutBtn = document.querySelector(".nav__el--logout");
   if (mapBox) {
     const locations = JSON.parse(mapBox.dataset.locations);
     displayMap(locations);
   }
-  if (loginForm) {
+  if (loginForm)
     loginForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       login(email, password);
     });
-  }
+  if (logOutBtn) logOutBtn.addEventListener("click", logout);
 })();
