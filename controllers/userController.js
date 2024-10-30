@@ -50,7 +50,7 @@ exports.getMe = (req, res, next) => {
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   console.log(req.file);
-  console.log(res.body);
+  // console.log(res.body);
 
   // 1.) Create error if user POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
@@ -63,6 +63,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 
   // 2.) Filter out unwanted field names that are not allowed to be updated
   const filteredBody = filterObj(req.body, 'name', 'email');
+  if (req.file) filteredBody.photo = req.file.filename; // add photo property into the filteredBody
 
   // 3.) Update user document
   const updatedUser = await User.findByIdAndUpdate(req.user._id, filteredBody, {
