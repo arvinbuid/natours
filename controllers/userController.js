@@ -1,7 +1,39 @@
+const multer = require('multer');
 const AppError = require('../utils/appError');
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const factory = require('./handlerFactory');
+
+// Configure multer image upload middleware
+
+// Storage
+const multerStorage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, 'public/img/users');
+  },
+  filename: function(req, file, cb) {
+    // user-userId-timestamp.jpeg
+    const ext = file.mimetype.split('/')[1];
+    cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
+  }
+});
+
+// Filter
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError('Not an image! Please upload a valid file.', 400));
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter
+});
+
+// Upload photo multer middleware
+exports.uploadUserPhoto = upload.single('photo');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
