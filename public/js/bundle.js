@@ -2560,7 +2560,6 @@
 
   // public/js/userLogin.js
   var login = async (email, password) => {
-    console.log(email, password);
     try {
       const res = await axios_default({
         method: "POST",
@@ -2600,10 +2599,30 @@
     }
   };
 
+  // public/js/updateSettings.js
+  var updateData = async (name, email) => {
+    try {
+      const res = await axios_default({
+        method: "PATCH",
+        url: "http://localhost:3000/api/v1/users/updateMe",
+        data: {
+          name,
+          email
+        }
+      });
+      if (res.data.status === "success") {
+        showAlert("success", "User updated successfully");
+      }
+    } catch (err) {
+      showAlert("error", err.response.data.message);
+    }
+  };
+
   // public/js/index.js
   var mapBox = document.getElementById("map");
-  var loginForm = document.querySelector(".form");
+  var loginForm = document.querySelector(".form--login");
   var logOutBtn = document.querySelector(".nav__el--logout");
+  var userFormData = document.querySelector(".form-user-data");
   if (mapBox) {
     const locations = JSON.parse(mapBox.dataset.locations);
     displayMap(locations);
@@ -2616,4 +2635,11 @@
       login(email, password);
     });
   if (logOutBtn) logOutBtn.addEventListener("click", logout);
+  if (userFormData)
+    userFormData.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      updateData(name, email);
+    });
 })();

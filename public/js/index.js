@@ -3,11 +3,13 @@
 import { displayMap } from './mapBox';
 import { login } from './userLogin';
 import { logout } from './userLogout';
+import { updateData } from './updateSettings';
 
 // DOM ELEMENTS
 const mapBox = document.getElementById('map');
-const loginForm = document.querySelector('.form');
+const loginForm = document.querySelector('.form--login');
 const logOutBtn = document.querySelector('.nav__el--logout');
+const userFormData = document.querySelector('.form-user-data');
 
 // DELEGATIONS
 if (mapBox) {
@@ -24,3 +26,11 @@ if (loginForm)
   });
 
 if (logOutBtn) logOutBtn.addEventListener('click', logout);
+
+if (userFormData)
+  userFormData.addEventListener('submit', e => {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    updateData(name, email);
+  });
