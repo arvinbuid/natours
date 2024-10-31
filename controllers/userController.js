@@ -1,24 +1,15 @@
 const multer = require('multer');
+const sharp = require('sharp');
+
 const AppError = require('../utils/appError');
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const factory = require('./handlerFactory');
 
-// Configure multer image upload middleware
+// STORING image via buffer
+const multerStorage = multer.memoryStorage();
 
-// Storage
-const multerStorage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, 'public/img/users');
-  },
-  filename: function(req, file, cb) {
-    // user-userId-timestamp.jpeg
-    const ext = file.mimetype.split('/')[1];
-    cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
-  }
-});
-
-// Filter
+// Filter to ONLY upload image
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image')) {
     cb(null, true);
@@ -34,6 +25,23 @@ const upload = multer({
 
 // Upload photo multer middleware
 exports.uploadUserPhoto = upload.single('photo');
+
+exports.resizeUserPhoto = (req, res, next) => {
+  if (!req.file) return next();
+
+  // Set req.file.filename
+  req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+
+  // Resize image to 500x500 square & format to JPEG
+  sharp(req.file.buffer)
+    .resize(500, 500)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/users/${req.file.filename}`);
+
+  // After processing a square image, proceed to next middleware
+  next();
+};
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -89,17 +97,25 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.createUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message:
-      'This route is not defined!. Please use /signup or /login route instead.'
-  });
-};
-
 exports.getAllUsers = factory.getAll(User);
 exports.getUser = factory.getOne(User);
 
 // Do NOT update the user password with this!
 exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
+
+// FUTURE REFERENCES
+
+// CONFIGURE multer image upload middleware using diskStorage (file system)
+
+// Storage
+// const multerStorage = multer.diskStorage({
+//   destination: function(req, file, cb) {
+//     cb(null, 'public/img/users');
+//   },
+//   filename: function(req, file, cb) {
+//     // user-userId-timestamp.jpeg
+//     const ext = file.mimetype.split('/')[1];
+//     cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
+//   }
+// });
