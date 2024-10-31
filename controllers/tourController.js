@@ -16,7 +16,7 @@ exports.aliasTopTours = (req, res, next) => {
 // STORING image via buffer
 const multerStorage = multer.memoryStorage();
 
-// Filter to ONLY upload image
+// Filter to ONLY upload images
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image')) {
     cb(null, true);
@@ -30,7 +30,7 @@ const upload = multer({
   fileFilter: multerFilter
 });
 
-// Upload photo multer middleware
+// Upload multi image multer upload middleware
 exports.uploadTourImages = upload.fields([
   { name: 'imageCover', maxCount: 1 },
   { name: 'images', maxCount: 3 }
@@ -40,12 +40,39 @@ exports.uploadTourImages = upload.fields([
 // upload.array('images', 3) req.files
 
 // Resize tour images
-exports.resizeTourImages = (req, res, next) => {
-  console.log(req.files);
-  next();
-};
+exports.resizeTourImages = catchAsync(async (req, res, next) => {
+  if (!req.files.imageCover || !req.files.images) return next();
 
-//
+  // 1.) Image Cover
+  req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
+
+  await sharp(req.files.imageCover[0].buffer)
+    .resize(2000, 1333) // 2000 x 1333
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/tours/${req.body.imageCover}`);
+
+  // 2.) Images
+  req.body.images = [];
+
+  await Promise.all(
+    req.files.images.map(async (curFile, i) => {
+      const filename = `tour-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+
+      await sharp(curFile.buffer)
+        .resize(2000, 1333) // 2000 x 1333
+        .toFormat('jpeg')
+        .jpeg({ quality: 90 })
+        .toFile(`public/img/tours/${filename}`);
+
+      req.body.images.push(filename);
+    })
+  );
+
+  console.log(req.body);
+
+  next();
+});
 
 // Route handlers
 exports.getAllTours = factory.getAll(Tour);

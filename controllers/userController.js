@@ -26,7 +26,7 @@ const upload = multer({
 // Upload photo multer middleware
 exports.uploadUserPhoto = upload.single('photo');
 
-exports.resizeUserPhoto = async (req, res, next) => {
+exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
   // Set req.file.filename
@@ -41,7 +41,7 @@ exports.resizeUserPhoto = async (req, res, next) => {
 
   // After processing a square image, proceed to next middleware
   next();
-};
+});
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
