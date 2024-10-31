@@ -2601,15 +2601,19 @@
 
   // public/js/updateSettings.js
   var updateSettings = async (data, type) => {
-    const url = type === "password" ? "http://localhost:3000/api/v1/users/updateMyPassword" : "http://localhost:3000/api/v1/users/updateMe";
     try {
+      const url = type === "password" ? "http://localhost:3000/api/v1/users/updateMyPassword" : "http://localhost:3000/api/v1/users/updateMe";
       const res = await axios_default({
         method: "PATCH",
         url,
         data
       });
       if (res.data.status === "success") {
-        showAlert("success", `${type.toUpperCase()} updated successfully`);
+        showAlert(
+          "success",
+          `${type.replace(type[0], type[0].toUpperCase())} updated successfully`
+        );
+        window.location.reload(true);
       }
     } catch (err) {
       showAlert("error", err.response.data.message);
@@ -2620,8 +2624,8 @@
   var mapBox = document.getElementById("map");
   var loginForm = document.querySelector(".form--login");
   var logOutBtn = document.querySelector(".nav__el--logout");
-  var userFormData = document.querySelector(".form-user-data");
   var userFormPassword = document.querySelector(".form-user-password");
+  var userFormData = document.querySelector(".form-user-data");
   if (mapBox) {
     const locations = JSON.parse(mapBox.dataset.locations);
     displayMap(locations);
@@ -2637,9 +2641,11 @@
   if (userFormData)
     userFormData.addEventListener("submit", (e) => {
       e.preventDefault();
-      const name = document.getElementById("name").value;
-      const email = document.getElementById("email").value;
-      updateSettings({ name, email }, "data");
+      const form = new FormData();
+      form.append("name", document.getElementById("name").value);
+      form.append("email", document.getElementById("email").value);
+      form.append("photo", document.getElementById("photo").files[0]);
+      updateSettings(form, "data");
     });
   if (userFormPassword) {
     userFormPassword.addEventListener("submit", async (e) => {
