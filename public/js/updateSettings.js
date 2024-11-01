@@ -23,7 +23,9 @@ export const updateSettings = async (data, type) => {
         `${type.replace(type[0], type[0].toUpperCase())} updated successfully`
       );
       // reload the window after user is updated
-      window.location.reload(true);
+      window.setTimeout(() => {
+        window.location.reload(true);
+      }, 3000);
     }
   } catch (err) {
     showAlert('error', err.response.data.message);

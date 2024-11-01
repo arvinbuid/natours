@@ -2613,7 +2613,9 @@
           "success",
           `${type.replace(type[0], type[0].toUpperCase())} updated successfully`
         );
-        window.location.reload(true);
+        window.setTimeout(() => {
+          window.location.reload(true);
+        }, 3e3);
       }
     } catch (err) {
       showAlert("error", err.response.data.message);
