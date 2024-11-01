@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const Transport = require('nodemailer-brevo-transport');
 const pug = require('pug');
 const { convert } = require('html-to-text');
 
@@ -12,8 +13,10 @@ module.exports = class Email {
 
   newTransport() {
     if (process.env.NODE_ENV === 'production') {
-      // Sendgrid
-      return 1;
+      // Brevo
+      return nodemailer.createTransport(
+        new Transport({ apiKey: process.env.BREVO_KEY })
+      );
     }
 
     return nodemailer.createTransport({
