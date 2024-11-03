@@ -4,9 +4,11 @@ import { displayMap } from './mapBox';
 import { login } from './userLogin';
 import { logout } from './userLogout';
 import { updateSettings } from './updateSettings';
+import { bookTour } from './paymongo';
 
 // DOM ELEMENTS
 const mapBox = document.getElementById('map');
+const bookBtn = document.getElementById('book-tour');
 const loginForm = document.querySelector('.form--login');
 const logOutBtn = document.querySelector('.nav__el--logout');
 const userFormPassword = document.querySelector('.form-user-password');
@@ -60,3 +62,10 @@ if (userFormPassword) {
     document.querySelector('.btn--save-password').textContent = 'Save Password'; // set button text to 'Save Password'
   });
 }
+
+if (bookBtn)
+  bookBtn.addEventListener('click', e => {
+    e.target.textContent = 'Processing...';
+    const { tourId } = e.target.dataset;
+    bookTour(tourId);
+  });

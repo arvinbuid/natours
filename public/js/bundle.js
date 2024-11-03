@@ -2622,8 +2622,23 @@
     }
   };
 
+  // public/js/paymongo.js
+  var bookTour = async (tourId) => {
+    try {
+      const response = await axios_default.post(
+        `http://localhost:3000/api/v1/bookings/checkout-session/${tourId}`
+      );
+      const checkoutUrl = response.data.session.url;
+      window.location.href = checkoutUrl;
+    } catch (err) {
+      console.log(err);
+      showAlert("error", "Failed to book tour. Please try again later.");
+    }
+  };
+
   // public/js/index.js
   var mapBox = document.getElementById("map");
+  var bookBtn = document.getElementById("book-tour");
   var loginForm = document.querySelector(".form--login");
   var logOutBtn = document.querySelector(".nav__el--logout");
   var userFormPassword = document.querySelector(".form-user-password");
@@ -2666,4 +2681,10 @@
       document.querySelector(".btn--save-password").textContent = "Save Password";
     });
   }
+  if (bookBtn)
+    bookBtn.addEventListener("click", (e) => {
+      e.target.textContent = "Processing...";
+      const { tourId } = e.target.dataset;
+      bookTour(tourId);
+    });
 })();
