@@ -1,7 +1,8 @@
 const axios = require('axios');
-const Tour = require('./../models/tourModel');
-const catchAsync = require('./../utils/catchAsync');
-const AppError = require('./../utils/appError');
+const Tour = require('../models/tourModel');
+const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
+const Booking = require('../models/bookingModel');
 
 const key = process.env.PAYMONGO_SECRET_KEY;
 
@@ -25,7 +26,9 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
             description: tour.summary,
             images: [`https://www.natours.dev/img/tours/${tour.imageCover}`],
             redirect: {
-              success: `${req.protocol}://${req.get('host')}/`,
+              success: `${req.protocol}://${req.get('host')}/?tour=${
+                req.params.tourId
+              }&user=${req.user.id}&price=${tour.price}`,
               failed: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`
             }
           }
@@ -50,4 +53,16 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
       new AppError('Failed to create PayMongo checkout session.', 400)
     );
   }
+});
+
+exports.createBookingCheckout = catchAsync(async (req, res, next) => {
+  // Temporary solution because it is NOT secured
+  const { tour, user, price } = req.query;
+
+  if (!tour && !user && !price) return next();
+
+  // Create a new booking
+  await Booking.create({ tour, user, price });
+
+  res.redirect(`${req.protocol}://${req.get('host')}/`.split('?')[0]);
 });
