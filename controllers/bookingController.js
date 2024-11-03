@@ -3,6 +3,7 @@ const Tour = require('../models/tourModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const Booking = require('../models/bookingModel');
+const factory = require('./handlerFactory');
 
 const key = process.env.PAYMONGO_SECRET_KEY;
 
@@ -66,3 +67,9 @@ exports.createBookingCheckout = catchAsync(async (req, res, next) => {
 
   res.redirect(`${req.protocol}://${req.get('host')}/`.split('?')[0]);
 });
+
+exports.getAllBookings = factory.getAll(Booking);
+exports.getBooking = factory.getOne(Booking);
+exports.createBooking = factory.createOne(Booking);
+exports.updateBooking = factory.updateOne(Booking);
+exports.deleteBooking = factory.deleteOne(Booking);
