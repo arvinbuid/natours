@@ -3,6 +3,7 @@
 import { displayMap } from './mapBox';
 import { login } from './userLogin';
 import { logout } from './userLogout';
+import { signup } from './userSignup';
 import { updateSettings } from './updateSettings';
 import { bookTour } from './paymongo';
 
@@ -10,6 +11,7 @@ import { bookTour } from './paymongo';
 const mapBox = document.getElementById('map');
 const bookBtn = document.getElementById('book-tour');
 const loginForm = document.querySelector('.form--login');
+const signupForm = document.querySelector('.form--signup');
 const logOutBtn = document.querySelector('.nav__el--logout');
 const userFormPassword = document.querySelector('.form-user-password');
 const userFormData = document.querySelector('.form-user-data');
@@ -26,6 +28,16 @@ if (loginForm)
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     login(email, password);
+  });
+
+if (signupForm)
+  signupForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const passwordConfirm = document.getElementById('confirmPassword').value;
+    signup(name, email, password, passwordConfirm);
   });
 
 if (logOutBtn) logOutBtn.addEventListener('click', logout);

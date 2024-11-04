@@ -2591,11 +2591,36 @@
         showAlert("success", "Logged out successfully");
         window.setTimeout(() => {
           location.reload(true);
+          location.assign("/");
         }, 1e3);
       }
     } catch (err) {
       console.log(err.response);
       showAlert("error", "Error logging out. Please try again");
+    }
+  };
+
+  // public/js/userSignup.js
+  var signup = async (name, email, password, passwordConfirm) => {
+    try {
+      const res = await axios_default({
+        method: "POST",
+        url: "http://localhost:3000/api/v1/users/signup",
+        data: {
+          name,
+          email,
+          password,
+          passwordConfirm
+        }
+      });
+      if (res.data.status === "success") {
+        showAlert("success", "Signed up successfully");
+        window.setTimeout(() => {
+          location.assign("/");
+        }, 1500);
+      }
+    } catch (err) {
+      showAlert("error", err.response.data.message);
     }
   };
 
@@ -2640,6 +2665,7 @@
   var mapBox = document.getElementById("map");
   var bookBtn = document.getElementById("book-tour");
   var loginForm = document.querySelector(".form--login");
+  var signupForm = document.querySelector(".form--signup");
   var logOutBtn = document.querySelector(".nav__el--logout");
   var userFormPassword = document.querySelector(".form-user-password");
   var userFormData = document.querySelector(".form-user-data");
@@ -2653,6 +2679,15 @@
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       login(email, password);
+    });
+  if (signupForm)
+    signupForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const passwordConfirm = document.getElementById("confirmPassword").value;
+      signup(name, email, password, passwordConfirm);
     });
   if (logOutBtn) logOutBtn.addEventListener("click", logout);
   if (userFormData)

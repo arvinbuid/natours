@@ -15,6 +15,7 @@ export const logout = async () => {
       // force page reload after 1.5 seconds to ensure user sees the logout message
       window.setTimeout(() => {
         location.reload(true); // force reload from server, not from browser cache
+        location.assign('/');
       }, 1000);
     }
   } catch (err) {
