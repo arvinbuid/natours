@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 
 const AppError = require('./utils/appError');
 const deepSanitize = require('./utils/deepSanitize');
@@ -74,10 +75,12 @@ app.use(
   })
 );
 
+app.use(compression());
+
 // Other middlewares
 app.use((req, res, next) => {
   // console.log(req.cookies);
-  console.log(`Incoming request: ${req.method} ${req.url}`);
+  // console.log(`Incoming request: ${req.method} ${req.url}`);
   next();
 });
 
