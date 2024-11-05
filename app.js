@@ -33,7 +33,15 @@ app.options('*', cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Set security HTTP headers
-app.use(helmet.crossOriginEmbedderPolicy());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        'script-src': ['self', 'https://natours-phct.onrender.com']
+      }
+    }
+  })
+);
 
 // Development logging
 if (process.env.NODE_ENV === 'development') {
