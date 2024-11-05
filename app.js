@@ -37,7 +37,7 @@ app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        'script-src': ['self', 'https://natours-phct.onrender.com']
+        'script-src': ["'self'", 'https://natours-phct.onrender.com']
       }
     }
   })
