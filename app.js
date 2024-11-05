@@ -7,6 +7,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 
 const AppError = require('./utils/appError');
 const deepSanitize = require('./utils/deepSanitize');
@@ -24,6 +25,10 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 // GLOBAL MIDDLEWARES
+// Implement CORS
+app.use(cors());
+app.options('*', cors());
+
 // Serving static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
